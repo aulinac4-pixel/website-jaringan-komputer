@@ -1,0 +1,356 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Praktikum Jaringan Komputer — Kabel LAN Crossover</title>
+<style>
+:root{
+  --bg:#eef0f5;
+  --dark:#070707;
+  --dark2:#111217;
+  --white:#fff;
+  --muted:#b9bcc5;
+  --accent:#c7ff2f;
+  --purple:#7b2cff;
+  --cyan:#12cfe8;
+}
+*{box-sizing:border-box;scroll-behavior:smooth}
+body{
+  margin:0;font-family:Arial,Helvetica,sans-serif;background:var(--bg);color:#151515;
+}
+nav{
+  position:sticky;top:0;z-index:20;
+  background:rgba(5,5,7,.94);backdrop-filter:blur(12px);
+  color:white;border-bottom:1px solid #27272b;
+}
+.nav{
+  max-width:1180px;margin:auto;padding:15px 22px;
+  display:flex;align-items:center;justify-content:space-between;gap:20px;
+}
+.brand{font-weight:900;letter-spacing:2px}
+.brand span{color:var(--accent)}
+.links a{
+  color:#ddd;text-decoration:none;font-size:13px;margin-left:18px;
+}
+.links a:hover{color:var(--accent)}
+.hero{
+  min-height:88vh;display:flex;align-items:center;justify-content:center;
+  padding:50px 20px;
+  background:
+    linear-gradient(135deg,rgba(0,0,0,.93),rgba(10,10,15,.78)),
+    radial-gradient(circle at 20% 20%,#2e3c53,transparent 30%),
+    repeating-linear-gradient(90deg,#0b0c10 0,#0b0c10 2px,#15171d 3px,#0b0c10 7px);
+  color:white;position:relative;overflow:hidden;
+}
+.hero:before{
+  content:"";position:absolute;width:620px;height:620px;border:70px solid rgba(255,255,255,.08);
+  border-radius:50%;left:50%;top:50%;transform:translate(-50%,-50%);
+}
+.hero-card{
+  width:min(1050px,100%);position:relative;z-index:2;text-align:center;
+  border:1px solid rgba(255,255,255,.13);padding:55px 30px;
+  background:rgba(0,0,0,.28);box-shadow:0 30px 90px rgba(0,0,0,.45);
+}
+.logos{display:flex;justify-content:center;gap:18px;margin-bottom:35px}
+.logo-circle{
+  width:48px;height:48px;border-radius:50%;display:grid;place-items:center;
+  border:2px solid #ddd;font-size:19px;background:#151515;
+}
+.kicker{font-size:12px;letter-spacing:4px;color:#ddd;margin-bottom:15px}
+.hero h1{
+  margin:0;font-size:clamp(42px,7vw,82px);line-height:.95;
+  letter-spacing:2px;font-weight:950;
+}
+.hero h1 span{color:var(--accent)}
+.hero .sub{letter-spacing:8px;font-size:12px;margin:22px 0 35px;color:#ddd}
+.hero .lecturer{font-size:10px;letter-spacing:3px;color:#aaa}
+.btn{
+  display:inline-block;margin:10px 6px;padding:13px 20px;border-radius:3px;
+  text-decoration:none;font-weight:800;font-size:13px;border:1px solid #555;color:white;
+}
+.btn.primary{background:var(--accent);color:#050505;border-color:var(--accent)}
+.section{max-width:1180px;margin:auto;padding:85px 22px}
+.section.dark{max-width:none;background:#090a0d;color:white}
+.inner{max-width:1180px;margin:auto}
+.title{font-size:13px;letter-spacing:4px;color:#777;font-weight:800}
+.dark .title{color:var(--accent)}
+h2{font-size:clamp(32px,5vw,55px);margin:10px 0 15px;line-height:1}
+.lead{max-width:760px;color:#666;line-height:1.8}
+.dark .lead{color:#aaa}
+.grid{display:grid;grid-template-columns:repeat(4,1fr);gap:15px;margin-top:35px}
+.card{
+  background:white;border:1px solid #ddd;padding:25px;box-shadow:0 12px 30px rgba(0,0,0,.06);
+}
+.dark .card{background:#111318;border-color:#27292f}
+.card .number{font-size:12px;color:#888;letter-spacing:2px}
+.card h3{margin:12px 0 8px}
+.card p{font-size:14px;line-height:1.7;color:#666}
+.dark .card p{color:#aaa}
+.steps{display:grid;grid-template-columns:repeat(2,1fr);gap:16px;margin-top:35px}
+.step{display:flex;gap:18px;align-items:flex-start}
+.stepno{
+  flex:0 0 42px;height:42px;background:#111;color:white;
+  display:grid;place-items:center;font-weight:900;
+}
+.dark .stepno{background:var(--accent);color:#050505}
+.wiring{
+  display:grid;grid-template-columns:1fr 1fr;gap:20px;margin-top:35px
+}
+.wirebox{background:white;padding:25px;border:1px solid #ddd}
+.wirebox.darkbox{background:#111;color:white;border-color:#292929}
+.wire{
+  display:flex;align-items:center;gap:12px;margin:9px 0;font-size:14px;
+}
+.wire i{width:48px;height:24px;border-radius:4px;border:1px solid #aaa}
+.wo{background:linear-gradient(#fff 0 47%,#f28a21 47%)}
+.o{background:#f28a21}.wg{background:linear-gradient(#fff 0 47%,#3ebc66 47%)}
+.g{background:#3ebc66}.wb{background:linear-gradient(#fff 0 47%,#3e7ad6 47%)}
+.b{background:#3e7ad6}.wbr{background:linear-gradient(#fff 0 47%,#9b6842 47%)}
+.br{background:#9b6842}
+.table-wrap{overflow:auto;margin-top:25px}
+table{width:100%;border-collapse:collapse;background:white}
+th,td{padding:15px;border-bottom:1px solid #ddd;text-align:left}
+th{background:#111;color:var(--accent)}
+.code{
+  background:#050608;color:#86ffb0;padding:18px;border-radius:5px;
+  font-family:Consolas,monospace;margin-top:10px;overflow:auto;
+}
+.media-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:20px;margin-top:35px}
+.media{
+  background:#111;color:white;padding:25px;border:1px solid #282a30;
+}
+.media video,.media iframe{
+  width:100%;height:320px;border:0;background:#050505;margin-top:15px;border-radius:4px;
+}
+.note{
+  margin-top:30px;padding:18px;background:#e6ffd0;border-left:4px solid #8cc51f;
+  line-height:1.7;
+}
+footer{background:#050505;color:#999;text-align:center;padding:35px 20px;font-size:12px;line-height:1.8}
+@media(max-width:850px){
+  .grid{grid-template-columns:1fr 1fr}
+  .wiring,.media-grid,.steps{grid-template-columns:1fr}
+  .links{display:none}
+}
+@media(max-width:520px){
+  #identitas > div{grid-template-columns:1fr !important}
+  #identitas img{max-width:240px;margin:auto}
+  .grid{grid-template-columns:1fr}
+  .hero{min-height:80vh}
+  .hero-card{padding:45px 18px}
+  .hero h1{font-size:42px}
+  .hero .sub{letter-spacing:4px}
+}
+</style>
+</head>
+<body>
+
+<nav>
+  <div class="nav">
+    <div class="brand">LAN<span>LAB</span> / 01</div>
+    <div class="links">
+      <a href="#alat">Alat</a>
+      <a href="#crimping">Crimping</a>
+      <a href="#wiring">Wiring</a>
+      <a href="#koneksi">Koneksi</a>
+      <a href="#media">Media</a>
+    </div>
+  </div>
+</nav>
+
+<header class="hero">
+  <div class="hero-card">
+    <div class="logos">
+      <div class="logo-circle">⚙</div>
+      <div class="logo-circle">⌘</div>
+      <div class="logo-circle">◈</div>
+    </div>
+    <div class="kicker">PRAKTIKUM JARINGAN KOMPUTER</div>
+    <h1>MERANGKAI KABEL LAN<br><span>CROSSOVER</span></h1>
+    <div class="sub">& SHARING 2 PC</div>
+    <div class="lecturer">DOSEN : DR. ALI FIRDAUS, S.KOM., M.KOM.</div>
+    <div style="margin-top:28px">
+      <a class="btn primary" href="#crimping">MULAI PRAKTIKUM →</a>
+      <a class="btn" href="#media">LIHAT MEDIA</a>
+    </div>
+  </div>
+</header>
+
+<section class="section" id="identitas">
+  <div class="title">IDENTITAS MAHASISWA</div>
+  <div style="display:grid;grid-template-columns:260px 1fr;gap:35px;align-items:center;margin-top:25px">
+    <div style="background:#111;padding:12px;border:1px solid #ddd;box-shadow:0 15px 35px rgba(0,0,0,.12)">
+      <img src="foto-identitas.jpg"
+           alt="Foto Aulin Arsih Andrianie"
+           style="width:100%;aspect-ratio:3/4;object-fit:cover;display:block"
+           onerror="this.style.display='none';this.nextElementSibling.style.display='grid'">
+      <div style="display:none;aspect-ratio:3/4;place-items:center;color:#aaa;background:#222;text-align:center;font-size:13px;padding:20px">
+        Foto identitas belum ditemukan.<br><br>
+        Upload foto dengan nama:<br><b>foto-identitas.jpg</b>
+      </div>
+    </div>
+    <div>
+      <h2>Aulin Arsih Andrianie</h2>
+      <p class="lead">
+        <b>Kelas:</b> 1-TIA<br>
+        <b>Jurusan:</b> Teknik Komputer<br>
+        <b>Prodi:</b> D4 Teknologi Informatika Multimedia Digital<br>
+        <b>Mata Kuliah:</b> Jaringan Komputer<br>
+        <b>Dosen:</b> Dr. Ali Firdaus, S.Kom., M.Kom.
+      </p>
+    </div>
+  </div>
+</section>
+
+<section class="section dark" id="alat">
+<div class="inner">
+  <div class="title">01 / TOOLKIT</div>
+  <h2>Alat & Bahan</h2>
+  <p class="lead">Siapkan seluruh komponen sebelum mulai merangkai kabel LAN crossover.</p>
+  <div class="grid">
+    <div class="card"><div class="number">01</div><h3>RJ45</h3><p>Konektor untuk menghubungkan kabel UTP dengan port Ethernet.</p></div>
+    <div class="card"><div class="number">02</div><h3>Kabel UTP</h3><p>Kabel jaringan yang memiliki delapan inti kabel kecil.</p></div>
+    <div class="card"><div class="number">03</div><h3>LAN Tester</h3><p>Digunakan untuk mengecek kontinuitas dan urutan kabel.</p></div>
+    <div class="card"><div class="number">04</div><h3>Tang Crimping</h3><p>Digunakan untuk mengunci konektor RJ45 pada kabel.</p></div>
+  </div>
+</div>
+</section>
+
+<section class="section" id="crimping">
+  <div class="title">02 / CRIMPING</div>
+  <h2>Merangkai Kabel LAN Crossover</h2>
+  <p class="lead">Ikuti setiap langkah secara berurutan agar kabel rapi dan dapat digunakan.</p>
+  <div class="steps">
+    <div class="card step"><div class="stepno">01</div><div><h3>Potong & Kupas</h3><p>Potong kabel UTP sesuai kebutuhan, kemudian kupas bagian luarnya sekitar 2–3 cm.</p></div></div>
+    <div class="card step"><div class="stepno">02</div><div><h3>Pisahkan 8 Kabel</h3><p>Pisahkan delapan kabel kecil dan luruskan masing-masing kabel.</p></div></div>
+    <div class="card step"><div class="stepno">03</div><div><h3>Susun T568A</h3><p>Susun ujung pertama menggunakan standar T568A dan potong rata.</p></div></div>
+    <div class="card step"><div class="stepno">04</div><div><h3>Masukkan RJ45</h3><p>Masukkan seluruh kabel ke RJ45 sampai menyentuh bagian ujung konektor.</p></div></div>
+    <div class="card step"><div class="stepno">05</div><div><h3>Crimping</h3><p>Masukkan RJ45 ke tang crimping lalu tekan sampai konektor terkunci.</p></div></div>
+    <div class="card step"><div class="stepno">06</div><div><h3>Ujung Kedua T568B</h3><p>Ulangi proses untuk ujung kedua dengan susunan T568B.</p></div></div>
+    <div class="card step"><div class="stepno">07</div><div><h3>Test Kabel</h3><p>Gunakan LAN tester dan periksa urutan lampu 1 sampai 8.</p></div></div>
+    <div class="card step"><div class="stepno">08</div><div><h3>Jika Gagal</h3><p>Periksa kembali susunan warna dan lakukan crimping ulang jika diperlukan.</p></div></div>
+  </div>
+</section>
+
+<section class="section dark" id="wiring">
+<div class="inner">
+  <div class="title">03 / WIRING</div>
+  <h2>Susunan Warna</h2>
+  <p class="lead">Kabel crossover menggunakan T568A pada satu ujung dan T568B pada ujung lainnya.</p>
+  <div class="wiring">
+    <div class="wirebox">
+      <h3>T568A — Ujung 1</h3>
+      <div class="wire"><i class="wg"></i>1. Putih Hijau</div>
+      <div class="wire"><i class="g"></i>2. Hijau</div>
+      <div class="wire"><i class="wo"></i>3. Putih Orange</div>
+      <div class="wire"><i class="b"></i>4. Biru</div>
+      <div class="wire"><i class="wb"></i>5. Putih Biru</div>
+      <div class="wire"><i class="o"></i>6. Orange</div>
+      <div class="wire"><i class="wbr"></i>7. Putih Coklat</div>
+      <div class="wire"><i class="br"></i>8. Coklat</div>
+    </div>
+    <div class="wirebox darkbox">
+      <h3>T568B — Ujung 2</h3>
+      <div class="wire"><i class="wo"></i>1. Putih Orange</div>
+      <div class="wire"><i class="o"></i>2. Orange</div>
+      <div class="wire"><i class="wg"></i>3. Putih Hijau</div>
+      <div class="wire"><i class="b"></i>4. Biru</div>
+      <div class="wire"><i class="wb"></i>5. Putih Biru</div>
+      <div class="wire"><i class="g"></i>6. Hijau</div>
+      <div class="wire"><i class="wbr"></i>7. Putih Coklat</div>
+      <div class="wire"><i class="br"></i>8. Coklat</div>
+    </div>
+  </div>
+</div>
+</section>
+
+<section class="section" id="koneksi">
+  <div class="title">04 / NETWORK</div>
+  <h2>Menghubungkan 2 Laptop</h2>
+  <p class="lead">Hubungkan dua laptop menggunakan kabel LAN crossover dan atur alamat IPv4 secara manual.</p>
+  <div class="steps">
+    <div class="card step"><div class="stepno">01</div><div><h3>Hubungkan Kabel</h3><p>Colokkan kedua ujung kabel LAN ke port Ethernet masing-masing laptop.</p></div></div>
+    <div class="card step"><div class="stepno">02</div><div><h3>Buka Pengaturan</h3><p>Control Panel → Network and Sharing Center → Change adapter settings.</p></div></div>
+    <div class="card step"><div class="stepno">03</div><div><h3>Atur IPv4</h3><p>Ethernet → Properties → Internet Protocol Version 4 (TCP/IPv4) → Properties.</p></div></div>
+    <div class="card step"><div class="stepno">04</div><div><h3>Simpan</h3><p>Masukkan IP sesuai tabel lalu klik OK.</p></div></div>
+  </div>
+  <div class="table-wrap">
+    <table>
+      <tr><th>Pengaturan</th><th>Laptop 1</th><th>Laptop 2</th></tr>
+      <tr><td>IP Address</td><td>192.168.1.1</td><td>192.168.1.2</td></tr>
+      <tr><td>Subnet Mask</td><td>255.255.255.0</td><td>255.255.255.0</td></tr>
+    </table>
+  </div>
+</section>
+
+<section class="section dark">
+<div class="inner">
+  <div class="title">05 / TEST</div>
+  <h2>Cek Keterhubungan</h2>
+  <p class="lead">Gunakan Command Prompt untuk menguji koneksi kedua laptop.</p>
+  <div class="steps">
+    <div class="card step"><div class="stepno">01</div><div><h3>Buka CMD</h3><p>Tekan Windows + R, ketik cmd, lalu Enter.</p></div></div>
+    <div class="card step"><div class="stepno">02</div><div><h3>Laptop 1 → Laptop 2</h3><div class="code">ping 192.168.1.2</div></div></div>
+    <div class="card step"><div class="stepno">03</div><div><h3>Laptop 2 → Laptop 1</h3><div class="code">ping 192.168.1.1</div></div></div>
+    <div class="card step"><div class="stepno">04</div><div><h3>Hasil</h3><p>Jika muncul “Reply from”, koneksi berhasil merespons.</p></div></div>
+  </div>
+</div>
+</section>
+
+<section class="section">
+  <div class="title">06 / FILE SHARING</div>
+  <h2>Sharing File via LAN</h2>
+  <div class="steps">
+    <div class="card step"><div class="stepno">01</div><div><h3>Pilih Folder</h3><p>Pilih folder yang ingin dibagikan di Laptop 1.</p></div></div>
+    <div class="card step"><div class="stepno">02</div><div><h3>Aktifkan Sharing</h3><p>Klik kanan → Properties → Sharing → Advanced Sharing → Share this folder → Apply.</p></div></div>
+    <div class="card step"><div class="stepno">03</div><div><h3>Akses Laptop 2</h3><p>Tekan Windows + R lalu masukkan:</p><div class="code">\\192.168.1.1</div></div></div>
+    <div class="card step"><div class="stepno">04</div><div><h3>Transfer File</h3><p>Buka folder yang tampil lalu lakukan copy/paste sesuai izin akses.</p></div></div>
+  </div>
+</section>
+
+<section class="section dark" id="media">
+<div class="inner">
+  <div class="title">07 / MEDIA HUB</div>
+  <h2>PPT & Video Praktikum</h2>
+  <p class="lead">Letakkan file berikut dalam repository GitHub yang sama dengan index.html.</p>
+
+  <div class="media-grid">
+    <div class="media">
+      <h3>📑 Materi PPT</h3>
+      <p>Black Futuristic Animated Programmer Presentation</p>
+      <a class="btn primary" href="Black%20Futuristic%20Animated%20Programmer%20Presentation_20260928_015412_0000.pptx" download>⬇ Download PPT</a>
+      <iframe src="https://view.officeapps.live.com/op/embed.aspx?src=https%3A%2F%2Faulinac4-pixel.github.io%2Fwebsite-jaringan-komputer%2FBlack%2520Futuristic%2520Animated%2520Programmer%2520Presentation_20260928_015412_0000.pptx"></iframe>
+    </div>
+
+    <div class="media">
+      <h3>🎬 Video Praktikum 1</h3>
+      <video controls preload="metadata">
+        <source src="1000731324_25MB.mp4" type="video/mp4">
+      </video>
+    </div>
+
+    <div class="media">
+      <h3>🎬 Video Praktikum 2</h3>
+      <video controls preload="metadata">
+        <source src="1000731378_under15MB.mp4" type="video/mp4">
+      </video>
+    </div>
+
+  </div>
+
+  <div class="note">
+    ⚠️ Pastikan nama file PPT, video, dan foto sama persis dengan nama yang tercantum di HTML.
+  </div>
+</div>
+</section>
+
+<footer>
+  <b>LANLAB / 01</b><br>
+  PRAKTIKUM JARINGAN KOMPUTER • Aulin Arsih Andrianie • 1-TIA<br>
+  Teknik Komputer • D4 Teknologi Informatika Multimedia Digital<br>
+  Dosen: Dr. Ali Firdaus, S.Kom., M.Kom.
+</footer>
+
+</body>
+</html>
